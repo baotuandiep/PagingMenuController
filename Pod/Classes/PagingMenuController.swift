@@ -148,7 +148,9 @@ open class PagingMenuController: UIViewController {
             let lastPage = menuView.currentPage
             guard page != lastPage else {
                 // place views on appropriate position
-                menuView.move(toPage: page, animated: animated)
+                if !options.disableAutoSelectInMenu {
+                    menuView.move(toPage: page, animated: animated)
+                }
                 pagingViewController?.positionMenuController()
                 return
             }
@@ -427,10 +429,12 @@ extension PagingMenuController {
     fileprivate var nextPageFromCurrentPoint: Int {
         guard let menuView = menuView else { return 0 }
         
-        let point = CGPoint(x: menuView.contentOffset.x + menuView.frame.width / 2, y: 0)
-        for (index, menuItemView) in menuView.menuItemViews.enumerated() {
-            guard menuItemView.frame.contains(point) else { continue }
-            return index
+        if !options.disableAutoSelectInMenu {
+            let point = CGPoint(x: menuView.contentOffset.x + menuView.frame.width / 2, y: 0)
+            for (index, menuItemView) in menuView.menuItemViews.enumerated() {
+                guard menuItemView.frame.contains(point) else { continue }
+                return index
+            }
         }
         return menuView.currentPage
     }
